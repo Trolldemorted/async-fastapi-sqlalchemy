@@ -26,7 +26,7 @@ class Note(Base):
         "notebook_id", ForeignKey("notebooks.id"), nullable=False
     )
 
-    notebook: Mapped[Notebook] = relationship("Notebook", back_populates="notes")
+    notebook: Mapped[Notebook] = relationship("Notebook", back_populates="notes", lazy='noload')
 
     @hybrid_property
     def notebook_title(self) -> str:
@@ -48,7 +48,7 @@ class Note(Base):
     async def read_by_ids(cls, session: AsyncSession, note_ids: list[int]) -> AsyncIterator[Note]:
         stmt = (
             select(cls)
-            .where(cls.id.in_(note_ids))  # type: ignore
+            .where(cls.id.in_(note_ids))
             .options(joinedload(cls.notebook))
         )
         stream = await session.stream_scalars(stmt.order_by(cls.id))

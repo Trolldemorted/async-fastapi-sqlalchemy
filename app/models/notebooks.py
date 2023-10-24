@@ -25,6 +25,7 @@ class Notebook(Base):
         back_populates="notebook",
         order_by="Note.id",
         cascade="save-update, merge, refresh-expire, expunge, delete, delete-orphan",
+        lazy='noload',
     )
 
     @classmethod
